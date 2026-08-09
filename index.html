@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack - The AI Casino</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="casino-table">
+        <div class="scoreboard glass-panel" id="scoreboard">
+            <h3>Scoreboard</h3>
+            <div class="scores" id="score-wins" style="display: none;">
+                <span>Player: <span id="player-wins">0</span></span>
+                <span>Computer: <span id="computer-wins">0</span></span>
+            </div>
+            <div class="scores" id="score-money" style="display: none;">
+                <span>Balance: $<span id="player-balance">1000</span></span>
+                <span>Current Bet: $<span id="current-bet">0</span></span>
+            </div>
+        </div>
+
+        <div class="dealer-section">
+            <div class="deck-area" id="deck-area">
+                <!-- Image source will be updated by JS -->
+                <img src="images/blue_back.png" id="deck-image" class="card-img">
+            </div>
+            
+            <div class="dealer-profile glass-panel">
+                <img src="images/dealer.png" alt="Dealer" class="dealer-img">
+                <div class="dealer-info">
+                    <h2>Arthur (Dealer)</h2>
+                    <p>Score: <span id="dealer-score">?</span></p>
+                </div>
+            </div>
+            <div class="hand-area" id="dealer-hand">
+                <!-- Dealer cards injected here -->
+            </div>
+        </div>
+
+        <div class="center-stage">
+            <h1 id="game-message">Place your bets to start!</h1>
+        </div>
+
+        <div class="player-section">
+            <div class="player-hands-wrapper" id="player-hands-wrapper">
+                <div class="hand-area active-hand" id="player-hand-0">
+                    <!-- Player cards injected here -->
+                </div>
+            </div>
+            
+            <div class="player-controls glass-panel">
+                <div class="player-info">
+                    <h2>You</h2>
+                    <p>Score: <span id="player-score">0</span></p>
+                </div>
+                <div class="buttons">
+                    <button id="btn-deal" class="btn primary">Deal</button>
+                    <button id="btn-hit" class="btn warning" disabled>Hit</button>
+                    <button id="btn-stand" class="btn danger" disabled>Stand</button>
+                    <button id="btn-split" class="btn info" style="display: none;">Split</button>
+                    <button id="btn-next" class="btn" style="display: none;">Next Round</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="startup-modal">
+        <div class="modal-content glass-panel">
+            <h2>Welcome to AI Casino</h2>
+            <p>How would you like to play today?</p>
+            <div class="buttons" style="justify-content: center; margin-top: 1.5rem;">
+                <button class="btn info" id="btn-play-fun">Play for Fun</button>
+                <button class="btn primary" id="btn-play-money">Play with Virtual Currency</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="betting-modal" style="display: none;">
+        <div class="modal-content glass-panel">
+            <h2>Place Your Bet</h2>
+            <div id="betting-rules" style="display: none; text-align: left; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4>Betting Rules</h4>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem;">
+                    <li>Minimum bet is $100.</li>
+                    <li>Blackjack (21 on first two cards) pays 3:2.</li>
+                    <li>Standard wins pay 1:1.</li>
+                    <li>Ties (Push) return your bet.</li>
+                    <li>Splitting requires an additional equal bet.</li>
+                </ul>
+            </div>
+            <p>Balance: $<span id="betting-balance">1000</span></p>
+            
+            <div class="betting-controls" style="margin-top: 1rem;">
+                <button class="btn" id="btn-bet-minus">-</button>
+                <span id="bet-amount" style="font-size: 1.5rem; font-weight: bold; margin: 0 1rem;">$100</span>
+                <button class="btn" id="btn-bet-plus">+</button>
+            </div>
+            
+            <button class="btn primary" id="btn-place-bet" style="margin-top: 1.5rem; width: 100%;">Deal Cards</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="glass-panel"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
