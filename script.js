@@ -10,6 +10,9 @@
     let currentBackImage = '';
     let gameActive = false;
     let gameResolutions = [];
+    
+    let audioCtx = null;
+    let isSoundEnabled = true;
 
     // Fun Mode State
     let playerWins = 0;
@@ -29,6 +32,7 @@
     const playerScoreEl = document.getElementById('player-score');
     const gameMessageEl = document.getElementById('game-message');
     const deckImageEl = document.getElementById('deck-image');
+    const btnSoundToggle = document.getElementById('btn-sound-toggle');
 
     const btnDeal = document.getElementById('btn-deal');
     const btnHit = document.getElementById('btn-hit');
@@ -74,6 +78,7 @@
 
     // Mode Selection
     btnPlayFun.addEventListener('click', () => {
+        initAudio();
         playMode = 'fun';
         startupModal.style.display = 'none';
         scoreWins.style.display = 'flex';
@@ -81,11 +86,51 @@
     });
 
     btnPlayMoney.addEventListener('click', () => {
+        initAudio();
         playMode = 'money';
         startupModal.style.display = 'none';
         scoreMoney.style.display = 'flex';
         startBettingPhase();
     });
+    
+    function initAudio() {
+        if (!isSoundEnabled) return;
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playCardSound() {
+        if (!isSoundEnabled || !audioCtx) return;
+        
+        const bufferSize = audioCtx.sampleRate * 0.15; // 0.15s
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 5000;
+        filter.Q.value = 1.0;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        noise.start();
+    }
 
     // Betting Phase
     function startBettingPhase() {
@@ -208,6 +253,7 @@
     }
 
     function hit(hand, el, type, hidden = false) {
+        playCardSound();
         let card = deck.pop();
         card.hidden = hidden;
         hand.push(card);
@@ -545,6 +591,12 @@
     btnStand.addEventListener('click', playerStand);
     btnSplit.addEventListener('click', splitHand);
     btnDouble.addEventListener('click', playerDoubleDown);
+
+    btnSoundToggle.addEventListener('click', () => {
+        isSoundEnabled = !isSoundEnabled;
+        btnSoundToggle.innerText = isSoundEnabled ? '🔊 Sound On' : '🔇 Sound Off';
+        if (isSoundEnabled) initAudio();
+    });
 
     // Next Round Handler
     btnNext.addEventListener('click', () => {
