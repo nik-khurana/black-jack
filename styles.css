@@ -262,22 +262,26 @@ body {
 /* Toast Notification */
 #toast-notification {
     position: fixed;
-    bottom: -100px; /* Hidden state */
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1000;
     color: var(--warning);
     border-color: var(--warning);
     background: rgba(0,0,0,0.85);
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 1.5rem 3rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease;
+    text-align: center;
 }
 
 #toast-notification.show {
-    bottom: 2rem;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Responsive */
