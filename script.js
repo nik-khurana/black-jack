@@ -104,13 +104,13 @@
         betAmountEl.innerText = '$' + pendingBetAmount;
         bettingModal.style.display = 'flex';
         
-        // Disable deal button if bankrupt
+        // Handle bankrupt state
         if(balance < 100) {
-            btnPlaceBet.innerText = "Bankrupt!";
-            btnPlaceBet.disabled = true;
+            btnPlaceBet.innerText = "Bankrupt! Claim $1000";
+            btnPlaceBet.style.backgroundColor = "var(--danger)";
         } else {
             btnPlaceBet.innerText = "Deal Cards";
-            btnPlaceBet.disabled = false;
+            btnPlaceBet.style.backgroundColor = "var(--primary)";
         }
     }
 
@@ -129,6 +129,15 @@
     });
 
     btnPlaceBet.addEventListener('click', () => {
+        // If bankrupt, clicking the button resets balance
+        if (balance < 100) {
+            balance = 1000;
+            saveBalance();
+            pendingBetAmount = 100;
+            startBettingPhase(); // Refresh modal
+            return;
+        }
+
         if (balance >= pendingBetAmount && pendingBetAmount > 0) {
             balance -= pendingBetAmount;
             saveBalance();
