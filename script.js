@@ -20,6 +20,7 @@
     let computerWins = 0;
 
     let playMode = 'fun';
+    let deckMode = 'fresh'; // 'fresh' or 'shoe'
     let balance = 1000;
     let pendingBetAmount = 100;
     let initialBetAmount = 0;
@@ -45,8 +46,17 @@
 
     // Modals & Scoreboard DOM
     const startupModal = document.getElementById('startup-modal');
+    const deckModeModal = document.getElementById('deck-mode-modal');
+    const tutorialModal = document.getElementById('tutorial-modal');
+    
     const btnPlayFun = document.getElementById('btn-play-fun');
     const btnPlayMoney = document.getElementById('btn-play-money');
+    
+    const btnModeFresh = document.getElementById('btn-mode-fresh');
+    const btnModeShoe = document.getElementById('btn-mode-shoe');
+    const btnOpenTutorial = document.getElementById('btn-open-tutorial');
+    const btnCloseTutorial = document.getElementById('btn-close-tutorial');
+    
     const scoreWins = document.getElementById('score-wins');
     const scoreMoney = document.getElementById('score-money');
 
@@ -78,13 +88,13 @@
         }
     }
 
-    // Mode Selection
+    // Step 1: Mode Selection (Fun vs Money)
     btnPlayFun.addEventListener('click', () => {
         initAudio();
         playMode = 'fun';
         startupModal.style.display = 'none';
         scoreWins.style.display = 'flex';
-        startGame();
+        deckModeModal.style.display = 'flex';
     });
 
     btnPlayMoney.addEventListener('click', () => {
@@ -92,7 +102,32 @@
         playMode = 'money';
         startupModal.style.display = 'none';
         scoreMoney.style.display = 'flex';
-        startBettingPhase();
+        deckModeModal.style.display = 'flex';
+    });
+    
+    // Step 2: Deck Mode Selection (Fresh vs Shoe)
+    btnModeFresh.addEventListener('click', () => {
+        deckMode = 'fresh';
+        deckModeModal.style.display = 'none';
+        if (playMode === 'fun') startGame();
+        else startBettingPhase();
+    });
+    
+    btnModeShoe.addEventListener('click', () => {
+        deckMode = 'shoe';
+        deckModeModal.style.display = 'none';
+        buildDeck(6); // Build initial 6-deck shoe
+        shuffleDeck();
+        if (playMode === 'fun') startGame();
+        else startBettingPhase();
+    });
+    
+    // Tutorial Modal
+    btnOpenTutorial.addEventListener('click', () => {
+        tutorialModal.style.display = 'flex';
+    });
+    btnCloseTutorial.addEventListener('click', () => {
+        tutorialModal.style.display = 'none';
     });
     
     function initAudio() {
@@ -136,7 +171,7 @@
         noise.start();
     }
 
-    // Betting Phase
+    // Step 3: Betting Phase
     function startBettingPhase() {
         if (!hasSeenRules) {
             bettingRules.style.display = 'block';
@@ -201,15 +236,17 @@
         }
     });
 
-    function buildDeck() {
+    function buildDeck(numDecks = 1) {
         deck = [];
-        for (let i = 0; i < suits.length; i++) {
-            for (let j = 0; j < values.length; j++) {
-                deck.push({
-                    value: values[j],
-                    suit: suits[i],
-                    image: `${values[j]}${suits[i]}.png`
-                });
+        for (let d = 0; d < numDecks; d++) {
+            for (let i = 0; i < suits.length; i++) {
+                for (let j = 0; j < values.length; j++) {
+                    deck.push({
+                        value: values[j],
+                        suit: suits[i],
+                        image: `${values[j]}${suits[i]}.png`
+                    });
+                }
             }
         }
     }
@@ -229,8 +266,19 @@
         currentHandIndex = 0;
         dealerHand = [];
         gameResolutions = [];
-        buildDeck();
-        shuffleDeck();
+        
+        // Deck Management
+        if (deckMode === 'fresh') {
+            buildDeck(1);
+            shuffleDeck();
+        } else if (deckMode === 'shoe') {
+            // Check for 75% penetration (6 decks * 52 = 312, 25% remaining = 78 cards)
+            if (deck.length < 78) {
+                showToast("Reshuffling 6-Deck Shoe...");
+                buildDeck(6);
+                shuffleDeck();
+            }
+        }
 
         dealerHandEl.innerHTML = '';
         playerHandsWrapper.innerHTML = `<div class="hand-area active-hand" id="player-hand-0"></div>`;

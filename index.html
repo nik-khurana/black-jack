@@ -85,6 +85,39 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="deck-mode-modal" style="display: none;">
+        <div class="modal-content glass-panel">
+            <h2>Select Deck Mode</h2>
+            <div class="buttons" style="flex-direction: column; gap: 1rem; align-items: stretch; margin-top: 1.5rem;">
+                <button class="btn info" id="btn-mode-fresh" style="width: 100%;">Fresh Deck Every Round</button>
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <button class="btn primary" id="btn-mode-shoe" style="flex: 1;">6-Deck Shoe (Counting Mode)</button>
+                    <button class="btn warning" id="btn-open-tutorial" style="padding: 0.5rem 1rem;">📖 Tutorial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tutorial-modal" style="display: none; z-index: 2000;">
+        <div class="modal-content glass-panel" style="max-width: 500px; text-align: left;">
+            <h2 style="text-align: center;">📖 Hi-Lo Card Counting</h2>
+            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;">
+                <p>Card counting tracks the ratio of high cards to low cards left in the shoe.</p>
+                <h4 style="margin-top: 1rem; color: var(--warning);">Card Values:</h4>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>Low Cards (2-6):</strong> +1</li>
+                    <li><strong>Neutral (7-9):</strong> 0</li>
+                    <li><strong>High Cards (10-Ace):</strong> -1</li>
+                </ul>
+                <h4 style="color: var(--warning);">How it works:</h4>
+                <p>Keep a "Running Count" of every card dealt. Divide that by the estimated decks remaining to get the "True Count".</p>
+                <p style="margin-top: 0.5rem;"><strong>High True Count (+2 or more):</strong> You have the advantage! Increase your bet.<br>
+                <strong>Negative True Count:</strong> The dealer has the advantage. Bet the minimum.</p>
+            </div>
+            <button class="btn primary" id="btn-close-tutorial" style="width: 100%;">Got it!</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="betting-modal" style="display: none;">
         <div class="modal-content glass-panel">
             <h2>Place Your Bet</h2>
