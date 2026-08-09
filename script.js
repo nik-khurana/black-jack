@@ -13,6 +13,7 @@
     
     let audioCtx = null;
     let isSoundEnabled = true;
+    let globalVolume = 0.3;
 
     // Fun Mode State
     let playerWins = 0;
@@ -33,6 +34,7 @@
     const gameMessageEl = document.getElementById('game-message');
     const deckImageEl = document.getElementById('deck-image');
     const btnSoundToggle = document.getElementById('btn-sound-toggle');
+    const volumeSlider = document.getElementById('sound-volume');
 
     const btnDeal = document.getElementById('btn-deal');
     const btnHit = document.getElementById('btn-hit');
@@ -117,13 +119,15 @@
         noise.buffer = buffer;
 
         const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 5000;
-        filter.Q.value = 1.0;
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000; // Softer frequency
 
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+        const peakVolume = globalVolume * 0.5; // Scale volume down slightly
+        
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(peakVolume, audioCtx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
 
         noise.connect(filter);
         filter.connect(gain);
@@ -592,10 +596,31 @@
     btnSplit.addEventListener('click', splitHand);
     btnDouble.addEventListener('click', playerDoubleDown);
 
+    volumeSlider.addEventListener('input', (e) => {
+        globalVolume = parseFloat(e.target.value);
+        if (globalVolume === 0) {
+            isSoundEnabled = false;
+            btnSoundToggle.innerText = '🔇';
+        } else {
+            isSoundEnabled = true;
+            btnSoundToggle.innerText = '🔊';
+            initAudio();
+        }
+    });
+
     btnSoundToggle.addEventListener('click', () => {
         isSoundEnabled = !isSoundEnabled;
-        btnSoundToggle.innerText = isSoundEnabled ? '🔊 Sound On' : '🔇 Sound Off';
-        if (isSoundEnabled) initAudio();
+        btnSoundToggle.innerText = isSoundEnabled ? '🔊' : '🔇';
+        if (isSoundEnabled) {
+            if (globalVolume === 0) {
+                globalVolume = 0.3;
+                volumeSlider.value = 0.3;
+            }
+            initAudio();
+        } else {
+            volumeSlider.value = 0;
+            globalVolume = 0;
+        }
     });
 
     // Next Round Handler
